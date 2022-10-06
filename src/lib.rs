@@ -9,7 +9,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! muscleman = "0.3.0"
+//! muscleman = "0.3.1"
 //! ```
 //!
 //! And this to your crate root:
@@ -228,6 +228,19 @@ mod tests {
 
     //#endregion Unsigned integer reading tests
 
+    //#region Varint reading tests
+
+    #[test]
+    fn read_varint() {
+        let mut buffer = Buffer::new();
+        let value = 0x0102030405060708;
+        buffer.write_varint(value);
+        let res = buffer.read_varint();
+        assert_eq!(res, Some(value));
+    }
+
+    //#endregion Varint reading tests
+
     //#endregion Integer reading tests
 
     //#region Float reading tests
@@ -287,6 +300,7 @@ mod tests {
 		let v_i16 = 0x0102;
 		let v_i32 = 0x01020304;
 		let v_i64 = 0x0102030405060708;
+        let v_varint: i64 = 0x0102030405060708;
 		let v_u8 = 0x01;
 		let v_u16 = 0x0102;
 		let v_u32 = 0x01020304;
@@ -303,6 +317,7 @@ mod tests {
 		buffer.write_i16(v_i16);
 		buffer.write_i32(v_i32);
 		buffer.write_i64(v_i64);
+        buffer.write_varint(v_varint);
 		buffer.write_u8(v_u8);
 		buffer.write_u16(v_u16);
 		buffer.write_u32(v_u32);
@@ -314,7 +329,8 @@ mod tests {
 
 		// For testing reasons, we are going to write the buffer to a file here
 		let mut file = File::create("test.bin").unwrap();
-		file.write_all(buffer.data()).unwrap();
+        let data = buffer.get_data();
+        file.write_all(&data[..]).unwrap();
 
 		// Read the values
 		let r_byte = buffer.read_byte();
@@ -323,6 +339,7 @@ mod tests {
 		let r_i16 = buffer.read_i16();
 		let r_i32 = buffer.read_i32();
 		let r_i64 = buffer.read_i64();
+        let r_varint = buffer.read_varint();
 		let r_u8 = buffer.read_u8();
 		let r_u16 = buffer.read_u16();
 		let r_u32 = buffer.read_u32();
@@ -339,6 +356,7 @@ mod tests {
 		assert_eq!(r_i16, Some(v_i16));
 		assert_eq!(r_i32, Some(v_i32));
 		assert_eq!(r_i64, Some(v_i64));
+        assert_eq!(r_varint, Some(v_varint));
 		assert_eq!(r_u8, Some(v_u8));
 		assert_eq!(r_u16, Some(v_u16));
 		assert_eq!(r_u32, Some(v_u32));

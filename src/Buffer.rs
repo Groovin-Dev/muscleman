@@ -247,28 +247,22 @@ impl Buffer {
     //#region VarInt reading methods
 
     /// Reads a VarInt from the buffer.
-    pub fn read_varint(&mut self) -> Option<i32> {
-        let mut result = 0;
-        let mut shift = 0;
-        let mut byte = 0;
+    pub fn read_varint(&mut self) -> Option<i64> {
+        let mut result: i64 = 0;
+        let mut shift: u8 = 0;
+        let mut byte: u8;
         loop {
             if self.position < self.length {
                 byte = self.data[self.position];
                 self.position += 1;
-                result |= ((byte & 0x7F) as i32) << shift;
-                shift += 7;
-                if shift > 35 {
-                    return None;
-                }
-                if (byte & 0x80) == 0 {
-                    break;
-                }
             } else {
                 return None;
             }
-        }
-        if (byte & 0x40) != 0 {
-            result |= -1 << shift;
+            result |= ((byte & 0x7F) as i64) << shift;
+            if byte & 0x80 == 0 {
+                break;
+            }
+            shift += 7;
         }
         Some(result)
     }
@@ -441,13 +435,13 @@ impl Buffer {
     //#region VarInt writing methods
 
     /// Writes a VarInt to the buffer.
-    pub fn write_varint(&mut self, value: i32) {
+    pub fn write_varint(&mut self, value: i64) {
         let mut value = value;
         loop {
-            let mut temp = (value & 0b0111_1111) as u8;
+            let mut temp = (value & 0x7F) as u8;
             value >>= 7;
             if value != 0 {
-                temp |= 0b1000_0000;
+                temp |= 0x80;
             }
             self.data.push(temp);
             self.length += 1;
