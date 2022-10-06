@@ -106,7 +106,7 @@
 //! `muscleman` is licensed under the MIT license. See the `LICENSE` file for more information.
 
 pub mod buffer;
-mod byte_order;
+pub mod byte_order;
 
 #[cfg(test)]
 mod tests {
