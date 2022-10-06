@@ -9,7 +9,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! muscleman = "0.2.1"
+//! muscleman = "0.3.0"
 //! ```
 //!
 //! And this to your crate root:

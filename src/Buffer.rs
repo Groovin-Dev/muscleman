@@ -80,8 +80,8 @@ impl Buffer {
     //# region Properties
 
     /// Gets the buffer's data
-    pub fn data(&self) -> &Vec<u8> {
-        &self.data
+    pub fn get_data(&self) -> Vec<u8> {
+        self.data.clone()
     }
 
     //#endregion Properties
@@ -243,6 +243,38 @@ impl Buffer {
     }
 
     //# endregion Unsigned integer reading methods
+
+    //#region VarInt reading methods
+
+    /// Reads a VarInt from the buffer.
+    pub fn read_varint(&mut self) -> Option<i32> {
+        let mut result = 0;
+        let mut shift = 0;
+        let mut byte = 0;
+        loop {
+            if self.position < self.length {
+                byte = self.data[self.position];
+                self.position += 1;
+                result |= ((byte & 0x7F) as i32) << shift;
+                shift += 7;
+                if shift > 35 {
+                    return None;
+                }
+                if (byte & 0x80) == 0 {
+                    break;
+                }
+            } else {
+                return None;
+            }
+        }
+        if (byte & 0x40) != 0 {
+            result |= -1 << shift;
+        }
+        Some(result)
+    }
+
+    //#endregion VarInt reading methods
+
     //#endregion Integer reading methods
 
     //#region Floating-point reading methods
@@ -405,6 +437,27 @@ impl Buffer {
     }
 
     //# endregion Unsigned integer writing methods
+
+    //#region VarInt writing methods
+
+    /// Writes a VarInt to the buffer.
+    pub fn write_varint(&mut self, value: i32) {
+        let mut value = value;
+        loop {
+            let mut temp = (value & 0b0111_1111) as u8;
+            value >>= 7;
+            if value != 0 {
+                temp |= 0b1000_0000;
+            }
+            self.data.push(temp);
+            self.length += 1;
+            if value == 0 {
+                break;
+            }
+        }
+    }
+
+    //#endregion VarInt writing methods
 
     //#endregion Integer writing methods
 
