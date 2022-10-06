@@ -5,7 +5,7 @@ And thinking of "buff" as in "buff body", it is a library for managing buffers o
 Add this to your `Cargo.toml`:
 ```toml
 [dependencies]
-muscleman = "0.1.0"
+muscleman = "0.2.0"
 ```
 And this to your crate root:
 ```rust
