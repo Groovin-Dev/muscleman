@@ -1,5 +1,6 @@
-use crate::byte_order::ByteOrder;
+use crate::ByteOrder::ByteOrder;
 
+#[allow(dead_code)]
 pub struct Buffer {
     // The buffer's data
     data: Vec<u8>,

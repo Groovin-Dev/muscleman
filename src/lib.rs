@@ -17,7 +17,7 @@
 //! ```rust
 //! extern crate muscleman;
 //!
-//! use muscleman::buffer::Buffer;
+//! use muscleman::Buffer::Buffer;
 //! ```
 //!
 //! ## Examples
@@ -25,9 +25,9 @@
 //! ### Creating a buffer
 //!
 //! ```rust
-//! use muscleman::buffer;
+//! use muscleman::Buffer;
 //!
-//! let mut buffer = buffer::new();
+//! let mut buffer = Buffer::new();
 //!
 //! buffer.write_byte(0x01);
 //! buffer.write_byte(0x02);
@@ -38,9 +38,9 @@
 //! ### Writing to a buffer
 //!
 //! ```rust
-//! use muscleman::buffer;
+//! use muscleman::Buffer;
 //!
-//! let mut buffer = buffer::new();
+//! let mut buffer = Buffer::new();
 //!
 //! // 8 to 64 bit signed integers
 //! buffer.write_i8(1);
@@ -67,9 +67,9 @@
 //! ### Reading from a buffer
 //!
 //! ```rust
-//! use muscleman::buffer;
+//! use muscleman::Buffer;
 //!
-//! let mut buffer = buffer::new();
+//! let mut buffer = Buffer::new();
 //!
 //! // Assume the data in the "Writing to a buffer" is currently in the buffer
 //!
@@ -105,14 +105,15 @@
 //!
 //! `muscleman` is licensed under the MIT license. See the `LICENSE` file for more information.
 
-pub mod buffer;
-pub mod byte_order;
+#![allow(non_snake_case)]
+pub mod Buffer;
+pub mod ByteOrder;
 
 #[cfg(test)]
 mod tests {
     use std::{fs::File, io::Write};
 
-    use super::buffer::Buffer;
+    use super::Buffer::Buffer;
 
     //#region Basic reading tests
 
